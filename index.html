@@ -3,38 +3,520 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Solicitação de Exclusão de Dados — SeuApp</title>
+  <title>TelosQuest</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 60px auto; padding: 0 20px; color: #333; }
-    h1 { font-size: 24px; }
-    input, textarea { width: 100%; padding: 10px; margin: 8px 0 16px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-    button { background: #d32f2f; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
-    button:hover { background: #b71c1c; }
-    .success { color: green; display: none; margin-top: 16px; }
+    :root {
+      --bg: #f5f4f0;
+      --surface: #eceae4;
+      --border: #dedad2;
+      --accent: #4f6ef7;
+      --accent2: #8b5cf6;
+      --text: #1a1a2e;
+      --muted: #7c7a72;
+      --card: #ffffff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Sora', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(79,110,247,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 110%, rgba(139,92,246,0.07) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 40px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .logo-name {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    /* ── Language Toggle ── */
+    .lang-toggle {
+      position: relative;
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 4px;
+    }
+
+    .lang-toggle::before {
+      content: '';
+      position: absolute;
+      top: 4px; left: 4px;
+      width: calc(50% - 4px);
+      height: calc(100% - 8px);
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 100px;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.35s ease;
+      box-shadow: 0 2px 12px rgba(79,110,247,0.3);
+      z-index: 0;
+    }
+
+    .lang-toggle.en-active::before {
+      transform: translateX(100%);
+      box-shadow: 0 2px 12px rgba(139,92,246,0.3);
+    }
+
+    .lang-btn {
+      position: relative;
+      z-index: 1;
+      padding: 6px 18px;
+      border-radius: 100px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: color 0.25s ease;
+      user-select: none;
+    }
+
+    .lang-btn.active { color: #fff; }
+    .lang-btn:not(.active):hover { color: var(--text); }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 64px 0 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── App Banner Image ── */
+    .app-banner {
+      width: 100%;
+      max-width: 420px;
+      aspect-ratio: 16/7;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 40px;
+      box-shadow:
+        0 4px 24px rgba(79,110,247,0.12),
+        0 1px 4px rgba(0,0,0,0.08);
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, var(--surface) 0%, #e8e4f0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      animation: floatIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .app-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Shown only when no image is provided */
+    .app-banner .banner-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .app-banner .banner-placeholder .icon {
+      font-size: 36px;
+      opacity: 0.4;
+    }
+
+    .app-banner img ~ .banner-placeholder { display: none; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(79,110,247,0.08);
+      border: 1px solid rgba(79,110,247,0.2);
+      border-radius: 100px;
+      padding: 5px 14px;
+      font-size: 12px;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    h1 {
+      font-family: 'Crimson Pro', serif;
+      font-size: clamp(40px, 7vw, 62px);
+      font-weight: 300;
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+
+    h1 em {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-desc {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--muted);
+      max-width: 480px;
+      margin-bottom: 36px;
+    }
+
+    /* ── Store Button ── */
+    .store-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--text);
+      color: var(--bg);
+      padding: 13px 26px;
+      border-radius: 100px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 20px rgba(26,26,46,0.2);
+    }
+
+    .store-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(26,26,46,0.25);
+    }
+
+    .store-btn .store-icon { font-size: 18px; }
+
+    /* ── Legal Links Section ── */
+    .legal-section {
+      padding: 56px 0 48px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .legal-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .legal-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .legal-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      text-decoration: none;
+      color: var(--text);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .legal-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.09);
+      border-color: var(--accent);
+    }
+
+    .legal-card .card-icon {
+      font-size: 28px;
+      width: 48px; height: 48px;
+      background: var(--surface);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .legal-card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.2px;
+    }
+
+    .legal-card p {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .legal-card .card-arrow {
+      margin-top: auto;
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: gap 0.2s ease;
+    }
+
+    .legal-card:hover .card-arrow { gap: 8px; }
+
+    /* ── Footer ── */
+    footer {
+      padding: 32px 0 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-left { font-size: 13px; color: var(--muted); }
+    .footer-left strong { color: var(--text); font-weight: 600; }
+
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .contact-link:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Language visibility ── */
+    [data-lang] { display: none !important; }
+    .lang-pt [data-lang="pt"] { display: block !important; }
+    .lang-en [data-lang="en"] { display: block !important; }
+    .lang-pt span[data-lang="pt"] { display: inline !important; }
+    .lang-en span[data-lang="en"] { display: inline !important; }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .container { padding: 0 18px; }
+      header { padding: 28px 0 0; }
+      .hero { padding: 44px 0 40px; }
+      .app-banner { max-width: 100%; border-radius: 16px; }
+      .hero-desc { font-size: 15px; }
+    }
+
+    @media (max-width: 420px) {
+      .container { padding: 0 16px; }
+      header { padding: 22px 0 0; }
+      .logo-name { font-size: 15px; }
+      .logo-icon { width: 30px; height: 30px; font-size: 15px; }
+      .lang-btn { padding: 5px 13px; font-size: 12px; }
+      .hero { padding: 36px 0 32px; }
+      h1 { font-size: 34px; }
+      .hero-desc { font-size: 14px; margin-bottom: 28px; }
+      .legal-cards { grid-template-columns: 1fr; }
+      .legal-section { padding: 40px 0 36px; }
+      footer { flex-direction: column; align-items: flex-start; padding: 24px 0 40px; }
+      .contact-link { width: 100%; justify-content: center; }
+    }
   </style>
 </head>
-<body>
+<body class="lang-pt">
 
-  <h1>Solicitar Exclusão de Dados</h1>
-  <p>Preencha o formulário abaixo para solicitar a exclusão de todos os seus dados associados ao <strong>Telos Quest</strong>. Processaremos sua solicitação em até <strong>7 dias úteis</strong>.</p>
+<div class="container">
 
-  <p><strong>Dados que serão excluídos:</strong> conta, progresso, compras e qualquer dado pessoal armazenado.</p>
+  <header>
+    <a class="logo" href="#">
+      <div class="logo-icon">⚔️</div>
+      <span class="logo-name">TelosQuest</span>
+    </a>
+    <div class="lang-toggle" id="langToggle">
+      <button class="lang-btn active" id="btnPt">PT</button>
+      <button class="lang-btn" id="btnEn">EN</button>
+    </div>
+  </header>
 
-  <form action="https://formsubmit.co/telosquestapp@gmail.com" method="POST">
-    <input type="hidden" name="_subject" value="Solicitação de Exclusão de Dados">
-    <input type="hidden" name="_captcha" value="false">
+  <!-- ── HERO ── -->
+  <section class="hero">
 
-    <label>Nome</label>
-    <input type="text" name="nome" placeholder="Seu nome" required />
+    <div class="app-banner">
+      <!-- <img src="banner.png" alt="TelosQuest banner"> -->
+      <div class="banner-placeholder">
+        <div class="icon">🖼️</div>
+        <span data-lang="pt">Adicione sua imagem aqui</span>
+        <span data-lang="en">Add your banner image here</span>
+      </div>
+    </div>
 
-    <label>E-mail cadastrado no app</label>
-    <input type="email" name="email" placeholder="seu@email.com" required />
+    <div class="badge" data-lang="pt">Disponível no Android</div>
+    <div class="badge" data-lang="en">Available on Android</div>
 
-    <label>Motivo (opcional)</label>
-    <textarea name="motivo" rows="4" placeholder="Descreva o motivo..."></textarea>
+    <h1 data-lang="pt">Embarque na<br><em>sua jornada.</em></h1>
+    <h1 data-lang="en">Begin your<br><em>quest.</em></h1>
 
-    <button type="submit">Solicitar Exclusão</button>
-  </form>
+    <p class="hero-desc" data-lang="pt">Um RPG de cartas épico onde suas escolhas definem o destino. Colecione, evolua e conquiste.</p>
+    <p class="hero-desc" data-lang="en">An epic card RPG where your choices define destiny. Collect, evolve and conquer.</p>
+
+    <a class="store-btn" href="#" data-lang="pt">
+      <span class="store-icon">▶</span> Baixar no Google Play
+    </a>
+    <a class="store-btn" href="#" data-lang="en">
+      <span class="store-icon">▶</span> Get it on Google Play
+    </a>
+
+  </section>
+
+  <!-- ── LEGAL LINKS ── -->
+  <section class="legal-section">
+    <p class="legal-title" data-lang="pt">Documentos Legais</p>
+    <p class="legal-title" data-lang="en">Legal Documents</p>
+
+    <div class="legal-cards">
+
+      <a class="legal-card" href="privacy-policy.html">
+        <div class="card-icon">🔒</div>
+        <h3 data-lang="pt">Política de Privacidade</h3>
+        <h3 data-lang="en">Privacy Policy</h3>
+        <p data-lang="pt">Como coletamos, usamos e protegemos seus dados.</p>
+        <p data-lang="en">How we collect, use and protect your data.</p>
+        <div class="card-arrow">
+          <span data-lang="pt">Ler</span>
+          <span data-lang="en">Read</span>
+          →
+        </div>
+      </a>
+
+      <a class="legal-card" href="https://telosquest.github.io/telosquest-data-deletion/">
+        <div class="card-icon">🗑️</div>
+        <h3 data-lang="pt">Exclusão de Dados</h3>
+        <h3 data-lang="en">Data Deletion</h3>
+        <p data-lang="pt">Solicite a exclusão de todos os seus dados pessoais.</p>
+        <p data-lang="en">Request the deletion of all your personal data.</p>
+        <div class="card-arrow">
+          <span data-lang="pt">Solicitar</span>
+          <span data-lang="en">Request</span>
+          →
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-left">
+      <p data-lang="pt"><strong>TelosQuest</strong> · Todos os direitos reservados © 2026</p>
+      <p data-lang="en"><strong>TelosQuest</strong> · All rights reserved © 2026</p>
+    </div>
+    <a class="contact-link" href="mailto:SEU_EMAIL@gmail.com">
+      ✉️ <span data-lang="pt">Contato</span><span data-lang="en">Contact</span>
+    </a>
+  </footer>
+
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var toggle = document.getElementById('langToggle');
+    var btnPt  = document.getElementById('btnPt');
+    var btnEn  = document.getElementById('btnEn');
+
+    function setLang(lang) {
+      document.body.className = 'lang-' + lang;
+      document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+      btnPt.classList.toggle('active', lang === 'pt');
+      btnEn.classList.toggle('active', lang === 'en');
+      toggle.classList.toggle('en-active', lang === 'en');
+    }
+
+    btnPt.addEventListener('click', function () { setLang('pt'); });
+    btnEn.addEventListener('click', function () { setLang('en'); });
+  });
+</script>
 
 </body>
 </html>
